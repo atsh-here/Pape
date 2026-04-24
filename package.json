@@ -1,0 +1,13 @@
+{
+  "name": "local-arweave-signer",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "dependencies": {
+    "@ardrive/turbo-sdk": "^1.40.2",
+    "arbundles": "^0.11.2",
+    "arweave": "^1.15.7",
+    "axios": "^1.6.7",
+    "express": "^4.22.1"
+  }
+}

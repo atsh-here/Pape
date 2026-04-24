@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+<!-- ===================== -->
+<!-- SCREEN 0: ENTRY -->
+<!-- ===================== -->
+<div id="screen-entry" class="screen active">
+  <div class="entry-container">
+    <h1><i class="fas fa-shield-alt"></i> Arweave Vault</h1>
+    <div class="btn-group">
+      <button id="btn-login" class="btn-primary">
+        <i class="fas fa-sign-in-alt"></i> Restore Vault
+      </button>
+      <button id="btn-new" class="btn-secondary">
+        <i class="fas fa-user-plus"></i> Create New Vault
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== -->
+<!-- SCREEN 1: LOGIN (mnemonic + password) -->
+<!-- ===================== -->
+<div id="screen-login" class="screen">
+  <div class="auth-container">
+    <div class="auth-box">
+      <h2><i class="fas fa-key"></i> Restore Vault</h2>
+      
+      <div class="input-group">
+        <label>Recovery Mnemonic</label>
+        <textarea 
+          id="login-mnemonic" 
+          placeholder="Enter your 12-word recovery phrase"
+          rows="3"
+        ></textarea>
+      </div>
+
+      <div class="input-group">
+        <label>Master Password</label>
+        <input 
+          id="login-password" 
+          type="password" 
+          placeholder="Enter your master password"
+        />
+      </div>
+
+      <button id="login-unlock" class="btn-primary">
+        <i class="fas fa-unlock"></i> Restore Vault
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== -->
+<!-- SCREEN 2: NEW USER – SHOW MNEMONIC -->
+<!-- ===================== -->
+<div id="screen-new-mnemonic" class="screen">
+  <div class="auth-container">
+    <div class="auth-box">
+      <h2><i class="fas fa-seedling"></i> Save Recovery Phrase</h2>
+      
+      <div class="input-group">
+        <label>Your Recovery Phrase</label>
+        <textarea 
+          id="generated-mnemonic" 
+          readonly
+          rows="4"
+          style="font-family: monospace; font-size: 16px;"
+        ></textarea>
+        <small style="color: var(--warning); display: block; margin-top: 5px;">
+          <i class="fas fa-exclamation-triangle"></i> This will only be shown once!
+        </small>
+      </div>
+
+      <div class="input-group">
+        <div style="background: rgba(255, 193, 7, 0.1); padding: 15px; border-radius: 8px; border-left: 4px solid var(--warning);">
+          <h4 style="color: var(--warning); margin-bottom: 8px;">
+            <i class="fas fa-shield-alt"></i> Security Instructions
+          </h4>
+          <ul style="color: var(--text-secondary); font-size: 12px; line-height: 1.5;">
+            <li>Write down all 12 words in order</li>
+            <li>Store in a secure, offline location</li>
+            <li>Never share with anyone</li>
+            <li>This is your only way to recover vault</li>
+          </ul>
+        </div>
+      </div>
+
+      <button id="mnemonic-saved" class="btn-primary">
+        <i class="fas fa-check"></i> I've Saved My Phrase
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== -->
+<!-- SCREEN 3: NEW USER – SET PASSWORD -->
+<!-- ===================== -->
+<div id="screen-new-password" class="screen">
+  <div class="auth-container">
+    <div class="auth-box">
+      <h2><i class="fas fa-lock"></i> Set Master Password</h2>
+      
+      <div class="input-group">
+        <label>Master Password</label>
+        <input 
+          id="new-password" 
+          type="password" 
+          placeholder="Create a strong master password"
+        />
+      </div>
+
+      <div class="input-group">
+        <label>Confirm Password</label>
+        <input 
+          id="new-password-confirm" 
+          type="password" 
+          placeholder="Re-enter your master password"
+        />
+      </div>
+
+      <div class="input-group">
+        <div style="background: rgba(59, 130, 246, 0.1); padding: 15px; border-radius: 8px; border-left: 4px solid var(--accent);">
+          <h4 style="color: var(--accent); margin-bottom: 8px;">
+            <i class="fas fa-lightbulb"></i> Password Requirements
+          </h4>
+          <ul style="color: var(--text-secondary); font-size: 12px; line-height: 1.5;" id="password-rules">
+            <li>At least 8 characters</li>
+            <li>3 of: lowercase, uppercase, number, symbol</li>
+          </ul>
+        </div>
+      </div>
+
+      <button id="create-vault" class="btn-primary">
+        <i class="fas fa-vault"></i> Create Vault
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== -->
+<!-- SCREEN 4: UNLOCK (password only) -->
+<!-- ===================== -->
+<div id="screen-unlock" class="screen">
+  <div class="auth-container">
+    <div class="auth-box">
+      <h2><i class="fas fa-unlock-alt"></i> Unlock Vault</h2>
+      
+      <div class="input-group">
+        <label>Master Password</label>
+        <input 
+          id="unlock-password" 
+          type="password" 
+          placeholder="Enter your master password"
+        />
+      </div>
+
+      <button id="unlock-btn" class="btn-primary">
+        <i class="fas fa-unlock"></i> Unlock Vault
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== -->
+<!-- SCREEN 5: VAULT MAIN INTERFACE -->
+<!-- ===================== -->
+<div id="screen-vault" class="screen">
+  <div class="vault-header">
+    <div class="vault-title">
+      <i class="fas fa-shield-alt" style="color: var(--accent);"></i>
+      <h1>Password Vault</h1>
+      <span style="background: rgba(102, 126, 234, 0.2); color: var(--accent); padding: 4px 8px; border-radius: 12px; font-size: 12px; margin-left: 10px;">
+        <i class="fas fa-sync-alt"></i> Synced
+      </span>
+    </div>
+    
+    <div class="vault-actions">
+      <button class="btn-icon" id="manual-sync">
+        <i class="fas fa-sync-alt"></i> Sync
+      </button>
+      <button class="btn-icon" id="add-entry">
+        <i class="fas fa-plus"></i> Add Entry
+      </button>
+      <button class="btn-icon" id="lock">
+        <i class="fas fa-lock"></i> Lock
+      </button>
+      <button class="btn-icon" id="debug-storage" style="color: var(--warning);">
+        <i class="fas fa-bug"></i> Debug
+      </button>
+    </div>
+  </div>
+
+  <div class="vault-container">
+    <!-- Sidebar with entries list -->
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <input type="text" class="search-box" placeholder="Search passwords...">
+      </div>
+      
+      <div class="entries-list" id="entries-list">
+        <!-- Entries will be populated here -->
+        <div class="empty-state" id="empty-state">
+          <i class="fas fa-key" style="font-size: 48px; color: var(--text-secondary); margin-bottom: 20px;"></i>
+          <h3>No passwords yet</h3>
+          <p>Add your first password to get started</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main content area -->
+    <div class="main-content" id="main-content">
+      <div class="empty-state" id="empty-detail">
+        <i class="fas fa-user-lock" style="font-size: 64px; color: var(--text-secondary); margin-bottom: 20px;"></i>
+        <h3>Select a password entry</h3>
+        <p>Choose an entry from the sidebar or add a new one</p>
+      </div>
+
+      <!-- Entry detail view (hidden by default) -->
+      <div class="entry-detail" id="entry-detail" style="display: none;">
+        <div class="entry-detail-header">
+          <h2 id="entry-title">Entry Title</h2>
+          <div class="entry-detail-actions">
+            <!-- Version History button will be inserted here by JavaScript -->
+            <button class="btn-icon" id="edit-entry">
+              <i class="fas fa-edit"></i> Edit
+            </button>
+            <button class="btn-icon" id="save-entry" style="display: none;">
+              <i class="fas fa-save"></i> Save
+            </button>
+            <button class="btn-icon" id="delete-entry" style="color: var(--danger);">
+              <i class="fas fa-trash"></i> Delete
+            </button>
+          </div>
+        </div>
+
+        <form id="entry-form">
+          <div class="field-row">
+            <div class="field-group">
+              <label><i class="fas fa-globe"></i> Website/Service</label>
+              <div class="field-with-copy">
+                <input type="text" id="entry-website" placeholder="https://example.com" disabled>
+                <button type="button" class="copy-btn" data-field="website" title="Copy website">
+                  <i class="fas fa-copy"></i>
+                </button>
+              </div>
+            </div>
+            <div class="field-group">
+              <label><i class="fas fa-tag"></i> Category</label>
+              <select id="entry-category" disabled>
+                <option value="social">Social Media</option>
+                <option value="finance">Finance</option>
+                <option value="work">Work</option>
+                <option value="personal">Personal</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field-group">
+              <label><i class="fas fa-user"></i> Username/Email</label>
+              <div class="field-with-copy">
+                <input type="text" id="entry-username" placeholder="username@example.com" disabled>
+                <button type="button" class="copy-btn" data-field="username" title="Copy username">
+                  <i class="fas fa-copy"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field-group">
+              <label><i class="fas fa-key"></i> Password</label>
+              <div class="password-field">
+                <input type="password" id="entry-password" placeholder="Password" disabled>
+                <button type="button" class="password-toggle" id="toggle-password">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button type="button" class="btn-totp" id="generate-password">
+                  <i class="fas fa-dice"></i> Generate
+                </button>
+                <button type="button" class="copy-btn" data-field="password" title="Copy password">
+                  <i class="fas fa-copy"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field-group">
+              <label><i class="fas fa-qrcode"></i> TOTP 2FA</label>
+              <div class="totp-field">
+                <input type="password" id="entry-totp" placeholder="Enter TOTP secret (hidden)" disabled>
+                <button type="button" class="password-toggle" id="toggle-totp">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button type="button" class="btn-totp" id="show-qr" style="display: none;">
+                  <i class="fas fa-qrcode"></i> QR
+                </button>
+                <button type="button" class="copy-btn" data-field="totp" title="Copy TOTP secret">
+                  <i class="fas fa-copy"></i>
+                </button>
+              </div>
+              <div class="totp-display" id="totp-display" style="display: none;">
+                <div class="totp-code">
+                  <span id="totp-code">------</span>
+                  <span class="totp-timer" id="totp-timer">30s</span>
+                  <button type="button" class="copy-btn" id="copy-totp-code" title="Copy TOTP code">
+                    <i class="fas fa-copy"></i>
+                  </button>
+                </div>
+                <div class="totp-progress">
+                  <div class="totp-progress-bar" id="totp-progress-bar"></div>
+                </div>
+                <small style="display: block; margin-top: 10px; color: var(--text-secondary); font-size: 11px;">
+                  <i class="fas fa-info-circle"></i> TOTP code refreshes every 30 seconds
+                </small>
+              </div>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label><i class="fas fa-sticky-note"></i> Notes</label>
+            <div class="field-with-copy">
+              <textarea id="entry-notes" rows="3" placeholder="Additional notes..." disabled></textarea>
+              <button type="button" class="copy-btn" data-field="notes" title="Copy notes">
+                <i class="fas fa-copy"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label><i class="fas fa-history"></i> Last Modified</label>
+            <input type="text" id="entry-modified" disabled>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Version History Modal (initially hidden) -->
+<div id="version-history-modal" class="version-history-modal" style="display: none;">
+  <div class="version-history-content">
+    <div class="version-history-header">
+      <h3><i class="fas fa-history"></i> Version History</h3>
+      <button class="btn-icon close-version-history">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="version-list" id="version-list">
+      <!-- Version items will be populated here -->
+    </div>
+    <div style="margin-top: 20px; text-align: center; display: flex; gap: 10px; justify-content: center;">
+      <button class="btn-outline" id="view-version">
+        <i class="fas fa-eye"></i> View Selected Version
+      </button>
+      <button class="btn-primary" id="restore-version">
+        <i class="fas fa-history"></i> Restore Selected Version
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Version Detail Modal (initially hidden) -->
+<div id="version-detail-modal" class="version-detail-modal" style="display: none;">
+  <div class="version-detail-content">
+    <div class="version-detail-header">
+      <h3><i class="fas fa-eye"></i> Viewing Version</h3>
+      <button class="btn-icon close-version-detail">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div style="padding: 20px;" id="version-detail-content">
+      <!-- Version detail content will be populated here -->
+    </div>
+  </div>
+</div>
+
+<!-- QR Code Modal -->
+<div id="qr-modal" class="version-detail-modal" style="display: none;">
+  <div class="version-detail-content">
+    <div class="version-detail-header">
+      <h3><i class="fas fa-qrcode"></i> TOTP QR Code</h3>
+      <button class="btn-icon close-qr-modal">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div style="padding: 20px; text-align: center;">
+      <canvas id="qr-canvas" width="200" height="200"></canvas>
+      <div id="qr-secret-display" style="margin-top: 15px; padding: 10px; background: var(--card-bg); border-radius: 8px; font-family: monospace; font-size: 12px; word-break: break-all; display: none;">
+        <strong>TOTP Secret:</strong> <span id="qr-secret-text"></span>
+        <button type="button" class="copy-btn" id="copy-qr-secret" title="Copy TOTP secret">
+          <i class="fas fa-copy"></i>
+        </button>
+      </div>
+      <p style="margin-top: 20px; font-size: 12px; color: var(--text-secondary);">
+        Scan with Google Authenticator or any TOTP app
+      </p>
+      <button class="btn-outline" id="reveal-secret-btn" style="margin-top: 10px;">
+        <i class="fas fa-eye"></i> Show Secret
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Output/Error messages -->
+<pre id="output"></pre>
+
+<script src="bip39-wordlist.js"></script>
+<script src="totp.js"></script>
+<script src="popup.js"></script>
+</body>
+</html>

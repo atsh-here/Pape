@@ -1,0 +1,19 @@
+{
+  "manifest_version": 2,
+  "name": "Arweave Password Vault",
+  "version": "1.0",
+  "description": "Secure, encrypted password manager with Arweave backup",
+  "permissions": [
+    "storage",
+    "http://localhost:8373/*"
+  ],
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": true
+  },
+  "browser_action": {
+    "default_title": "Password Vault",
+    "default_popup": "popup.html"
+  },
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
+}
